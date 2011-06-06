@@ -14,7 +14,7 @@
 "
 " Usage
 " -----
-"  Hit then ENTER key when the cursor is on a wiki link
+"  Hit the ENTER key when the cursor is on a wiki link
 "  The corresponding file is loaded in the current buffer
 
 
