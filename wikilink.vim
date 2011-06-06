@@ -54,8 +54,11 @@ function! WikiLinkWordFilename(word)
   if !empty(a:word)
     let cur_file_name = bufname("%")
     let dir = strpart(cur_file_name, 0, strridx(cur_file_name, '/'))
+    if !empty(dir)
+      let dir = dir."/"
+    endif
     let extension = strpart(cur_file_name, strridx(cur_file_name, '.'))
-    let file_name = dir."/".a:word.extension
+    let file_name = dir.a:word.extension
   endif
   return file_name
 endfunction
