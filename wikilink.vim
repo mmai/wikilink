@@ -70,4 +70,29 @@ function! WikiLinkGotoLink()
   endif
 endfunction
 
+"Gollum structure
+function! WikiLinkDetectFile(word)
+  let bar_filename = WikiLinkWordFilename(a:word) 
+  "TODO : find in parent directories
+  return bar_filename
+endfunction
+
+function! WikiLinkShowStructure()
+  "Detect footerbar
+  let footer_bar = WikiLinkDetectFile("_Footerbar")
+  if filereadable(footer_bar)
+    exec "botright 7 split " . footer_bar
+  endif
+
+  "Detect sidebar
+  let side_bar = WikiLinkDetectFile("_Sidebar")
+  if filereadable(side_bar)
+    exec "topleft 31 vsplit " . side_bar
+  endif
+endfunction
+
 nmap <silent> <CR> :call WikiLinkGotoLink()<CR>
+
+"au BufNewFile,BufRead .asciidoc,.creole,.markdown,.mdown,.mkdn,.mkd,.md,.org,.pod,.rdoc,.rest.txt,.rst.txt,.rest,.rst,.textile,.mediawiki,.wiki	call WikiLinkShowStructure()
+nmap <silent> Q :call WikiLinkShowStructure()<CR>
+
