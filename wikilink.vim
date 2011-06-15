@@ -1,21 +1,26 @@
 " File: wikilink.vim
 " Author: Henri Bourcereau 
-" Version: 0.2
-" Last Modified: June 14, 2011
+" Version: 0.3
+" Last Modified: June 15, 2011
 "
 " "WikiLink" is a Vim plugin which eases the navigation between files 
 " in a personnal wiki
-" Links syntax currently supported follows Github's Gollum (https://github.com/github/gollum)
-" ie [[My link|My displayed link]]
+" Links syntax currently supported follows Github's Gollum (https://github.com/github/gollum)  ie [[My link|My displayed link]]
+" This plugin also detects footerbar and sidebar files and splits the window
+" accordingly (again, see Gollum for syntax)
 "
 " Installation
 " ------------
-"  Copy the wikilink.vim file into the $HOME/.vim/plugin/ directory
+" Copy the wikilink.vim file into the $HOME/.vim/plugin/ directory
 "
 " Usage
 " -----
-"  Hit the ENTER key when the cursor is on a wiki link
-"  The corresponding file is loaded in the current buffer
+" Hit the ENTER key when the cursor is on a wiki link
+" The corresponding file is loaded in the current buffer
+"
+" Contribute
+" ----------
+" You can fork this project on Github : https://github.com/mmai/wikilink
 
 
 "Initialize constants
@@ -28,9 +33,7 @@ let s:sepWord = '|'
 
 "Move the cursor to the main window (not the sidebar or the bottombar)
 function! WikiLinkGotoMainWindow()
-  let cur_file_name = bufname("%")
-  let cur_file_name = strpart(cur_file_name, 0, strridx(cur_file_name, '.'))
-  let cur_file_name = strpart(cur_file_name, strridx(cur_file_name, '/') + 1)
+  let cur_file_name = fnamemodify(bufname("%"), ":t:r")
   if (cur_file_name == s:footerbar)
     exec "winc k "
   elseif (cur_file_name == s:sidebar)
@@ -68,12 +71,12 @@ function! WikiLinkWordFilename(word)
   "Same directory and same extension as the current file
   if !empty(a:word)
     let cur_file_name = bufname("%")
-    let dir = strpart(cur_file_name, 0, strridx(cur_file_name, '/'))
+    let dir = fnamemodify(cur_file_name, ":h")
     if !empty(dir)
       let dir = dir."/"
     endif
-    let extension = strpart(cur_file_name, strridx(cur_file_name, '.'))
-    let file_name = dir.a:word.extension
+    let extension = fnamemodify(cur_file_name, ":e")
+    let file_name = dir.a:word.".".extension
   endif
   return file_name
 endfunction
@@ -88,47 +91,52 @@ endfunction
 
 "search file in the current directory and its ancestors
 function! WikiLinkFindFile(afile)
-  let afile = a:afile
-  echo afile
+  "XXX does not work : return findfile(a:afile, '.;')
+  let afile = fnamemodify(a:afile, ":p")
   if filereadable(afile)
     return afile
   else
-    let filedir = strpart(afile, 0, strridx(afile, '/'))
-    let filename = strpart(afile, strridx(afile, '/'))
-    if !isdirectory(filedir)
+    let filename = fnamemodify(afile, ":t")
+    let file_parentdir = fnamemodify(afile, ":h:h")
+    if file_parentdir == "//"
+      "We've reached the root, no more parents
       return ""
     else
-      return WikiLinkFindFile(filedir . "/.." . filename)
+      return WikiLinkFindFile(file_parentdir . "/" . filename)
     endif
   endif
 endfunction
 
 function! WikiLinkDetectFile(word)
-  let bar_filename = WikiLinkFindFile(WikiLinkWordFilename(a:word))
-  return bar_filename
+  return WikiLinkFindFile(WikiLinkWordFilename(a:word))
 endfunction
 
 function! WikiLinkShowStructure()
-  "close all windows except active one
-  exec "winc o"
+  let cur_file_name = fnamemodify(bufname("%"), ":t:r")
+  if cur_file_name != s:footerbar && cur_file_name != s:sidebar
+    "close all windows except active one
+    exec "winc o"
 
-  "Detect footerbar
-  let footer_bar = WikiLinkDetectFile(s:footerbar)
-  if filereadable(footer_bar)
-    exec "botright 7 split " . footer_bar
-    call WikiLinkGotoMainWindow()
-  endif
+    "Detect footerbar
+    let footer_bar = WikiLinkDetectFile(s:footerbar)
+    if filereadable(footer_bar)
+      exec "botright 7 split " . footer_bar
+      call WikiLinkGotoMainWindow()
+    endif
 
-  "Detect sidebar
-  let side_bar = WikiLinkDetectFile(s:sidebar)
-  if filereadable(side_bar)
-    exec "topleft 30 vsplit " . side_bar
-    call WikiLinkGotoMainWindow()
+    "Detect sidebar
+    let side_bar = WikiLinkDetectFile(s:sidebar)
+    if filereadable(side_bar)
+      exec "topleft 30 vsplit " . side_bar
+      call WikiLinkGotoMainWindow()
+    endif
   endif
 endfunction
 
 nmap <silent> <CR> :call WikiLinkGotoLink()<CR>
 
-"au BufNewFile,BufRead .asciidoc,.creole,.markdown,.mdown,.mkdn,.mkd,.md,.org,.pod,.rdoc,.rest.txt,.rst.txt,.rest,.rst,.textile,.mediawiki,.wiki	call WikiLinkShowStructure()
-nmap <silent> R :call WikiLinkShowStructure()<CR>
+augroup wikilink
+au!
+au BufNewFile,BufRead *.asciidoc,*.creole,*.markdown,*.mdown,*.mkdn,*.mkd,*.md,*.org,*.pod,*.rdoc,*.rest.txt,*.rst.txt,*.rest,*.rst,*.textile,*.mediawiki,*.wiki	call WikiLinkShowStructure()
+augroup END
 
