@@ -6,7 +6,7 @@
 " "WikiLink" is a Vim plugin which eases the navigation between files 
 " in a personnal wiki
 " Links syntax currently supported follows Github's Gollum (https://github.com/github/gollum)  ie [[My link|My displayed link]]
-" This plugin also detects footerbar and sidebar files and splits the window
+" This plugin also detects footer and sidebar files and splits the window
 " accordingly (again, see Gollum for syntax)
 "
 " Installation
@@ -24,7 +24,7 @@
 
 
 "Initialize constants
-let s:footerbar = "_Footerbar"
+let s:footer = "_Footer"
 let s:sidebar = "_Sidebar"
 
 let s:startWord = '[['
@@ -34,7 +34,7 @@ let s:sepWord = '|'
 "Move the cursor to the main window (not the sidebar or the bottombar)
 function! WikiLinkGotoMainWindow()
   let cur_file_name = fnamemodify(bufname("%"), ":t:r")
-  if (cur_file_name == s:footerbar)
+  if (cur_file_name == s:footer)
     exec "winc k "
   elseif (cur_file_name == s:sidebar)
     exec "winc l "
@@ -113,12 +113,12 @@ endfunction
 
 function! WikiLinkShowStructure()
   let cur_file_name = fnamemodify(bufname("%"), ":t:r")
-  if cur_file_name != s:footerbar && cur_file_name != s:sidebar
+  if cur_file_name != s:footer && cur_file_name != s:sidebar
     "close all windows except active one
     exec "winc o"
 
-    "Detect footerbar
-    let footer_bar = WikiLinkDetectFile(s:footerbar)
+    "Detect footer
+    let footer_bar = WikiLinkDetectFile(s:footer)
     if filereadable(footer_bar)
       exec "botright 7 split " . footer_bar
       call WikiLinkGotoMainWindow()
