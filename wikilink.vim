@@ -73,7 +73,11 @@ function! WikiLinkWordFilename(word)
     let cur_file_name = bufname("%")
     let dir = fnamemodify(cur_file_name, ":h")
     if !empty(dir)
-      let dir = dir."/"
+      if (dir == ".")
+        let dir = ""
+      else
+        let dir = dir."/"
+      endif
     endif
     let extension = fnamemodify(cur_file_name, ":e")
     let file_name = dir.a:word.".".extension
@@ -85,6 +89,12 @@ function! WikiLinkGotoLink()
   let link = WikiLinkWordFilename(WikiLinkGetWord())
   if !empty(link)
     call WikiLinkGotoMainWindow()
+    "Search in subdirectories
+    let mypath =  fnamemodify(bufname("%"), ":p:h")."/**"
+    let existing_link = findfile(link, mypath)
+    if !empty(existing_link)
+      let link = existing_link
+    endif
     exec "edit " . link 
   endif
 endfunction
