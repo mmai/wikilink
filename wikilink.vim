@@ -5,7 +5,7 @@
 "
 " "WikiLink" is a Vim plugin which eases the navigation between files 
 " in a personnal wiki
-" Links syntax currently supported follows Github's Gollum (https://github.com/github/gollum)  ie [[My link|My displayed link]]
+" Links syntax currently supported follows Github's Gollum (https://github.com/github/gollum)  ie [[My displayed link|My link]]
 " This plugin also detects footer and sidebar files and splits the window
 " accordingly (again, see Gollum for syntax)
 "
@@ -57,7 +57,11 @@ function! WikiLinkGetWord()
 
   if !empty(word)
     "Only return the link part
-    let word = split(word, s:sepWord)[0]
+    if word =~ s:sepWord
+      let word = split(word, s:sepWord)[1]
+    else
+      let word = split(word, s:sepWord)[0]
+    endif
 
     "substitute spaces by dashes
     let word = substitute(word, '[ /]', '-', 'g')
