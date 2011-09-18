@@ -9,6 +9,12 @@
  ------------
  Copy the wikilink.vim file into the $HOME/.vim/plugin/ directory
 
+ Configuration
+ -------------
+ Window split on footer and sidebar detection can be disabled by writing this
+ line on your .vimrc file :
+ let wikilinkAutosplit="off"
+
  Usage
  -----
  Hit the ENTER key when the cursor is on a wiki link
