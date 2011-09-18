@@ -128,20 +128,21 @@ endfunction
 function! WikiLinkShowStructure()
   let cur_file_name = fnamemodify(bufname("%"), ":t:r")
   if cur_file_name != s:footer && cur_file_name != s:sidebar
-    "close all windows except active one
-    exec "winc o"
-
-    "Detect footer
-    let footer_bar = WikiLinkDetectFile(s:footer)
-    if filereadable(footer_bar)
-      exec "botright 7 split " . footer_bar
-      call WikiLinkGotoMainWindow()
-    endif
+    "Remove existing footer and sidebar
+    silent! exec "bdelete " . s:footer
+    silent! exec "bdelete " . s:sidebar
 
     "Detect sidebar
     let side_bar = WikiLinkDetectFile(s:sidebar)
     if filereadable(side_bar)
-      exec "topleft 30 vsplit " . side_bar
+      exec "leftabove 30 vsplit " . side_bar
+      call WikiLinkGotoMainWindow()
+    endif
+
+    "Detect footer
+    let footer_bar = WikiLinkDetectFile(s:footer)
+    if filereadable(footer_bar)
+      exec "rightbelow 7 split " . footer_bar
       call WikiLinkGotoMainWindow()
     endif
   endif
