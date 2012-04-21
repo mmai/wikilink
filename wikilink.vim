@@ -1,7 +1,7 @@
 " File: wikilink.vim
 " Author: Henri Bourcereau 
-" Version: 0.4
-" Last Modified: September 18, 2011
+" Version: 0.5
+" Last Modified: April 21, 2012
 "
 " "WikiLink" is a Vim plugin which eases the navigation between files 
 " in a personnal wiki
@@ -23,6 +23,7 @@
 " -----
 " Hit the ENTER key when the cursor is on a wiki link
 " The corresponding file is loaded in the current buffer
+" Hit Shift + ENTER to go back
 "
 " Contribute
 " ----------
@@ -172,6 +173,8 @@ nnoremap <script> <Plug>WikiLinkGotoLink :WikiLinkGotoLink<CR>
 if !hasmapto('<Plug>WikiLinkGotoLink')
   nmap <silent> <CR> <Plug>WikiLinkGotoLink
 endif
+"Shift+Return to return to the previous buffer 
+nmap <S-CR> :b#<CR>
 
 augroup wikilink
   au!
