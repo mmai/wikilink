@@ -20,3 +20,4 @@
  Hit the ENTER key when the cursor is on a wiki link
  The corresponding file is loaded in the current buffer
 
+ Hit Shift + ENTER to go back
