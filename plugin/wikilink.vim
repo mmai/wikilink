@@ -82,7 +82,7 @@ function! WikiLinkGetWord()
     endif
 
     "substitute spaces by dashes
-    let word = substitute(word, '[ /]', '-', 'g')
+    let word = substitute(word, '[ ]', '-', 'g')
   end
 
   return word
