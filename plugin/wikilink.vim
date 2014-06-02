@@ -81,6 +81,7 @@ function! WikiLinkGetWord()
       let word = split(word, s:sepWord)[0]
     endif
 
+    let word = substitute(word, '^\s*\(.\{-}\)\s*$', '\1', '')
     "substitute spaces by dashes
     let word = substitute(word, '[ ]', '-', 'g')
   end
