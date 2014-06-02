@@ -1,7 +1,7 @@
 " File: wikilink.vim
 " Author: Henri Bourcereau 
-" Version: 0.5
-" Last Modified: April 21, 2012
+" Version: 0.6
+" Last Modified: June 02, 2014
 "
 " "WikiLink" is a Vim plugin which eases the navigation between files 
 " in a personnal wiki
@@ -81,9 +81,10 @@ function! WikiLinkGetWord()
       let word = split(word, s:sepWord)[0]
     endif
 
+    " strip leading and trailing spaces
     let word = substitute(word, '^\s*\(.\{-}\)\s*$', '\1', '')
     "substitute spaces by dashes
-    let word = substitute(word, '[ ]', '-', 'g')
+    let word = substitute(word, '\s', '-', 'g')
   end
 
   return word
