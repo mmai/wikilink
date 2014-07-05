@@ -1,6 +1,6 @@
 "WikiLink" is a Vim plugin which eases the navigation between files 
  in a personnal wiki
- Links syntax currently supported follows Github's Gollum (https://github.com/github/gollum)
+ Links syntax currently supported follows Github's Gollum (https://github.com/gollum/gollum)
   [[My displayed link|My link]]
 
  This plugin also detects footerbar and sidebar files and splits the window accordingly (again, see Gollum for syntax)
