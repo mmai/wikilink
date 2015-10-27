@@ -104,7 +104,15 @@ function! WikiLinkWordFilename(word)
       endif
     endif
     let extension = fnamemodify(cur_file_name, ":e")
-    let file_name = dir.a:word.".".extension
+    if !empty(extension)
+      let file_name = dir.a:word.".".extension
+    else
+      if (match(fnamemodify(cur_file_name, ":t"), '\.') != -1)
+        let  file_name = dir.a:word."."
+      else
+        let file_name = dir.a:word
+      endif
+    endif
   endif
   return file_name
 endfunction
